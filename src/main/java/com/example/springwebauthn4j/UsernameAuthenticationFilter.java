@@ -5,8 +5,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 public class UsernameAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-
-    public UsernameAuthenticationFilter(String pattern, String httpMethod) {
-        setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher(pattern, httpMethod));
-    }
+	
+	public UsernameAuthenticationFilter(String pattern, String httpMethod) {
+		setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher(pattern, httpMethod));
+	}
 }

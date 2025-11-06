@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PasswordAuthenticationProvider extends DaoAuthenticationProvider {
-
-    @Override
-    public void doAfterPropertiesSet() {
-        // no-op: skip parent checks
-    }
+	
+	@Override
+	public void doAfterPropertiesSet() {
+		// no-op: skip parent checks
+	}
 }
