@@ -47,8 +47,7 @@ public class WebSecurityConfig {
 	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
-		http
-				.authorizeHttpRequests(authorize -> authorize
+		http.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
 						.requestMatchers("/login", "/login-fido2", "/authenticate/option").permitAll()
 						.requestMatchers("/password").hasAnyAuthority(SecurityContextUtil.Auth.AUTHENTICATED_USERNAME.getValue())

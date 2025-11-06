@@ -87,7 +87,7 @@ public class WebAuthn4JCredentialServiceImpl implements FidoCredentialService {
 				null,
 				mFidoCredential.getSignCount(),
 				deserializedAttestedCredentialData,
-				new AuthenticationExtensionsAuthenticatorOutputs(),
+				new AuthenticationExtensionsAuthenticatorOutputs<>(),
 				null,
 				null,
 				null
