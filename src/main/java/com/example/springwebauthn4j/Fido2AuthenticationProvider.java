@@ -8,6 +8,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.example.springwebauthn4j.service.AssertionVerifyResult;
 import com.example.springwebauthn4j.service.AuthenticateOption;
@@ -21,11 +23,9 @@ import jakarta.servlet.http.HttpSession;
 public class Fido2AuthenticationProvider implements AuthenticationProvider {
 	
 	private final WebAuthnServerService webAuthnServerService;
-	private final HttpServletRequest request;
 	
-	public Fido2AuthenticationProvider(WebAuthnServerService webAuthnServerService, HttpServletRequest request) {
+	public Fido2AuthenticationProvider(WebAuthnServerService webAuthnServerService) {
 		this.webAuthnServerService = webAuthnServerService;
-		this.request = request;
 	}
 	
 	@Override
@@ -33,6 +33,10 @@ public class Fido2AuthenticationProvider implements AuthenticationProvider {
 		if (!(authentication instanceof AssertionAuthenticationToken)) {
 			throw new BadCredentialsException("Invalid Authentication");
 		}
+		
+		ServletRequestAttributes attrs =
+				(ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+		HttpServletRequest request = (attrs != null) ? attrs.getRequest() : null;
 		
 		// 从 session 获取 authenticateOption
 		HttpSession session = request == null ? null : request.getSession(false);
