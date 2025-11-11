@@ -1,4 +1,3 @@
-// java
 package com.example.springwebauthn4j.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
