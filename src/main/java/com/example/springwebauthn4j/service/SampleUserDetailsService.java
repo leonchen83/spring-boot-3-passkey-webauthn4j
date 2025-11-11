@@ -35,14 +35,9 @@ public class SampleUserDetailsService implements UserDetailsService {
 		
 		List<SimpleGrantedAuthority> authorities;
 		if (SecurityContextUtil.isUsernameAuthenticated()) {
-			authorities = Arrays.asList(
-					new SimpleGrantedAuthority(SecurityContextUtil.Auth.AUTHENTICATED_PASSWORD.getValue()),
-					new SimpleGrantedAuthority(SecurityContextUtil.Role.USER.getValue())
-			);
+			authorities = Arrays.asList(new SimpleGrantedAuthority(SecurityContextUtil.Auth.AUTHENTICATED_PASSWORD.getValue()), new SimpleGrantedAuthority(SecurityContextUtil.Role.USER.getValue()));
 		} else {
-			authorities = Arrays.asList(
-					new SimpleGrantedAuthority(SecurityContextUtil.Auth.AUTHENTICATED_USERNAME.getValue())
-			);
+			authorities = Arrays.asList(new SimpleGrantedAuthority(SecurityContextUtil.Auth.AUTHENTICATED_USERNAME.getValue()));
 		}
 		
 		return new User(mUser.getUserId(), mUser.getPassword(), authorities);

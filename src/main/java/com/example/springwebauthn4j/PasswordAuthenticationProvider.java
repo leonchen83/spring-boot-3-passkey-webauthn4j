@@ -1,4 +1,3 @@
-// java
 package com.example.springwebauthn4j;
 
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;

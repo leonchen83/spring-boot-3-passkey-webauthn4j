@@ -21,8 +21,7 @@ public class UsernameAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
 	}
 	
 	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
-			throws IOException, ServletException {
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 		if (SecurityContextUtil.isUsernameAuthenticated()) {
 			response.sendRedirect(nextAuthUrl);
 		} else {

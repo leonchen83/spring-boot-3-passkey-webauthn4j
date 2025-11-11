@@ -1,4 +1,3 @@
-// java
 package com.example.springwebauthn4j.service.webauthn4j;
 
 import java.nio.charset.StandardCharsets;
@@ -55,16 +54,11 @@ public class WebAuthn4JServerServiceImpl implements WebAuthnServerService {
 	private final FidoCredentialService mFidoCredentialService;
 	private final MfidoCredentialRepository mFidoCredentialRepository;
 	
-	private final PublicKeyCredentialRpEntity rp = new PublicKeyCredentialRpEntity(
-			"localhost",
-			"webauthn4j-test"
-	);
+	private final PublicKeyCredentialRpEntity rp = new PublicKeyCredentialRpEntity("localhost", "webauthn4j-test");
 	
 	private final Origin origin = Origin.create("http://localhost:8080");
 	
-	public WebAuthn4JServerServiceImpl(MuserRepository mUserRepository,
-	                                   FidoCredentialService mFidoCredentialService,
-	                                   MfidoCredentialRepository mFidoCredentialRepository) {
+	public WebAuthn4JServerServiceImpl(MuserRepository mUserRepository, FidoCredentialService mFidoCredentialService, MfidoCredentialRepository mFidoCredentialRepository) {
 		this.mUserRepository = mUserRepository;
 		this.mFidoCredentialService = mFidoCredentialService;
 		this.mFidoCredentialRepository = mFidoCredentialRepository;
@@ -79,45 +73,17 @@ public class WebAuthn4JServerServiceImpl implements WebAuthnServerService {
 		
 		DefaultChallenge challenge = new DefaultChallenge();
 		
-		PublicKeyCredentialUserEntity userInfo = new PublicKeyCredentialUserEntity(
-				createUserId(mUser.getInternalId()),
-				userId,
-				mUser.getDisplayName()
-		);
+		PublicKeyCredentialUserEntity userInfo = new PublicKeyCredentialUserEntity(createUserId(mUser.getInternalId()), userId, mUser.getDisplayName());
 		
-		List<PublicKeyCredentialParameters> pubKeyCredParams = List.of(
-				new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.ES256),
-				new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.RS256)
-		);
+		List<PublicKeyCredentialParameters> pubKeyCredParams = List.of(new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.ES256), new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.RS256));
 		
-		List<PublicKeyCredentialDescriptor> excludeCredentials = mFidoCredentialRepository.findByUserInternalId(mUser.getInternalId())
-				.stream()
-				.map(credential -> new PublicKeyCredentialDescriptor(
-						PublicKeyCredentialType.PUBLIC_KEY,
-						credential.getCredentialId(),
-						null
-				))
-				.collect(Collectors.toList());
+		List<PublicKeyCredentialDescriptor> excludeCredentials = mFidoCredentialRepository.findByUserInternalId(mUser.getInternalId()).stream().map(credential -> new PublicKeyCredentialDescriptor(PublicKeyCredentialType.PUBLIC_KEY, credential.getCredentialId(), null)).collect(Collectors.toList());
 		
-		AuthenticatorSelectionCriteria authenticatorSelectionCriteria = new AuthenticatorSelectionCriteria(
-				null,
-				true,
-				UserVerificationRequirement.REQUIRED
-		);
+		AuthenticatorSelectionCriteria authenticatorSelectionCriteria = new AuthenticatorSelectionCriteria(null, true, UserVerificationRequirement.REQUIRED);
 		
 		AttestationConveyancePreference attestation = AttestationConveyancePreference.NONE;
 		
-		PublicKeyCredentialCreationOptions option = new PublicKeyCredentialCreationOptions(
-				rp,
-				userInfo,
-				challenge,
-				pubKeyCredParams,
-				TimeUnit.SECONDS.toMillis(60),
-				excludeCredentials,
-				authenticatorSelectionCriteria,
-				attestation,
-				null
-		);
+		PublicKeyCredentialCreationOptions option = new PublicKeyCredentialCreationOptions(rp, userInfo, challenge, pubKeyCredParams, TimeUnit.SECONDS.toMillis(60), excludeCredentials, authenticatorSelectionCriteria, attestation, null);
 		
 		return new RegisterOption(option);
 	}
@@ -133,12 +99,7 @@ public class WebAuthn4JServerServiceImpl implements WebAuthnServerService {
 			throw e;
 		}
 		
-		CredentialRecord credentialRecord = new CredentialRecordImpl(
-				registrationData.getAttestationObject(),
-				registrationData.getCollectedClientData(),
-				registrationData.getClientExtensions(),
-				registrationData.getTransports()
-		);
+		CredentialRecord credentialRecord = new CredentialRecordImpl(registrationData.getAttestationObject(), registrationData.getCollectedClientData(), registrationData.getClientExtensions(), registrationData.getTransports());
 		
 		byte[] credentialId = registrationData.getAttestationObject().getAuthenticatorData().getAttestedCredentialData().getCredentialId();
 		
@@ -155,12 +116,7 @@ public class WebAuthn4JServerServiceImpl implements WebAuthnServerService {
 		byte[] attestationObject = decoder.decode(pkc.response.attestationObject);
 		byte[] clientDataJSON = decoder.decode(pkc.response.clientDataJSON);
 		
-		RegistrationRequest registrationRequest = new RegistrationRequest(
-				attestationObject,
-				clientDataJSON,
-				null,
-				pkc.response.transports
-		);
+		RegistrationRequest registrationRequest = new RegistrationRequest(attestationObject, clientDataJSON, null, pkc.response.transports);
 		
 		try {
 			return WebAuthnManager.createNonStrictWebAuthnManager().parse(registrationRequest);
@@ -172,35 +128,19 @@ public class WebAuthn4JServerServiceImpl implements WebAuthnServerService {
 	private RegistrationParameters createRegistrationParameters(RegisterOption registerOption) {
 		DefaultChallenge challenge = new DefaultChallenge(registerOption.getPublicKeyCredentialCreationOptions().getChallenge().toString());
 		
-		ServerProperty serverProperty = new ServerProperty(
-				origin,
-				rp.getId(),
-				challenge,
-				null
-		);
+		ServerProperty serverProperty = new ServerProperty(origin, rp.getId(), challenge, null);
 		
 		List<PublicKeyCredentialParameters> pubKeyCredParams = null;
 		boolean userVerificationRequired = true;
 		
-		return new RegistrationParameters(
-				serverProperty,
-				pubKeyCredParams,
-				userVerificationRequired
-		);
+		return new RegistrationParameters(serverProperty, pubKeyCredParams, userVerificationRequired);
 	}
 	
 	@Override
 	public AuthenticateOption getAuthenticateOption() {
 		DefaultChallenge challenge = new DefaultChallenge();
 		
-		PublicKeyCredentialRequestOptions options = new PublicKeyCredentialRequestOptions(
-				challenge,
-				TimeUnit.SECONDS.toMillis(60),
-				rp.getId(),
-				null,
-				UserVerificationRequirement.REQUIRED,
-				null
-		);
+		PublicKeyCredentialRequestOptions options = new PublicKeyCredentialRequestOptions(challenge, TimeUnit.SECONDS.toMillis(60), rp.getId(), null, UserVerificationRequirement.REQUIRED, null);
 		
 		return new AuthenticateOption(options);
 	}
@@ -239,14 +179,7 @@ public class WebAuthn4JServerServiceImpl implements WebAuthnServerService {
 		byte[] clientDataJSON = decoder.decode(pkc.response.clientDataJSON);
 		byte[] signature = decoder.decode(pkc.response.signature);
 		
-		AuthenticationRequest authenticationRequest = new AuthenticationRequest(
-				credentialId,
-				userHandle,
-				authenticatorData,
-				clientDataJSON,
-				null,
-				signature
-		);
+		AuthenticationRequest authenticationRequest = new AuthenticationRequest(credentialId, userHandle, authenticatorData, clientDataJSON, null, signature);
 		
 		try {
 			return WebAuthnManager.createNonStrictWebAuthnManager().parse(authenticationRequest);
@@ -258,20 +191,9 @@ public class WebAuthn4JServerServiceImpl implements WebAuthnServerService {
 	private AuthenticationParameters createAuthenticationParameters(AuthenticateOption authenticateOption, CredentialRecord credentialRecord) {
 		DefaultChallenge challenge = new DefaultChallenge(authenticateOption.getPublicKeyCredentialRequestOptions().getChallenge().toString());
 		
-		ServerProperty serverProperty = new ServerProperty(
-				origin,
-				rp.getId(),
-				challenge,
-				null
-		);
+		ServerProperty serverProperty = new ServerProperty(origin, rp.getId(), challenge, null);
 		
-		return new AuthenticationParameters(
-				serverProperty,
-				credentialRecord,
-				null,
-				true,
-				true
-		);
+		return new AuthenticationParameters(serverProperty, credentialRecord, null, true, true);
 	}
 	
 	private byte[] createUserId(String userId) {

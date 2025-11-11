@@ -25,8 +25,7 @@ public class WebAuthn4JCredentialServiceImpl implements FidoCredentialService {
 	private final MuserRepository mUserRepository;
 	private final MfidoCredentialRepository mFidoCredentialRepository;
 	
-	public WebAuthn4JCredentialServiceImpl(MuserRepository mUserRepository,
-	                                       MfidoCredentialRepository mFidoCredentialRepository) {
+	public WebAuthn4JCredentialServiceImpl(MuserRepository mUserRepository, MfidoCredentialRepository mFidoCredentialRepository) {
 		this.mUserRepository = mUserRepository;
 		this.mFidoCredentialRepository = mFidoCredentialRepository;
 	}
@@ -39,19 +38,11 @@ public class WebAuthn4JCredentialServiceImpl implements FidoCredentialService {
 		}
 		
 		ObjectConverter objectConverter = new ObjectConverter();
-		AttestedCredentialDataConverter attestedCredentialDataConverter =
-				new AttestedCredentialDataConverter(objectConverter);
+		AttestedCredentialDataConverter attestedCredentialDataConverter = new AttestedCredentialDataConverter(objectConverter);
 		
-		byte[] serializedAttestedCredentialData =
-				attestedCredentialDataConverter.convert(attestationVerifyResult.getCredentialRecord().getAttestedCredentialData());
+		byte[] serializedAttestedCredentialData = attestedCredentialDataConverter.convert(attestationVerifyResult.getCredentialRecord().getAttestedCredentialData());
 		
-		MfidoCredentialforWebAuthn4J entity = new MfidoCredentialforWebAuthn4J(
-				0,
-				mUser.getInternalId(),
-				attestationVerifyResult.getCredentialId(),
-				attestationVerifyResult.getCredentialRecord().getCounter(),
-				serializedAttestedCredentialData
-		);
+		MfidoCredentialforWebAuthn4J entity = new MfidoCredentialforWebAuthn4J(0, mUser.getInternalId(), attestationVerifyResult.getCredentialId(), attestationVerifyResult.getCredentialRecord().getCounter(), serializedAttestedCredentialData);
 		
 		mFidoCredentialRepository.save(entity);
 	}
@@ -59,9 +50,7 @@ public class WebAuthn4JCredentialServiceImpl implements FidoCredentialService {
 	@Override
 	public Pair<CredentialRecord, String> load(String userInternalId, byte[] credentialId) {
 		List<MfidoCredentialforWebAuthn4J> entityList = mFidoCredentialRepository.findByUserInternalId(userInternalId);
-		Optional<MfidoCredentialforWebAuthn4J> opt = entityList.stream()
-				.filter(e -> Arrays.equals(e.getCredentialId(), credentialId))
-				.findFirst();
+		Optional<MfidoCredentialforWebAuthn4J> opt = entityList.stream().filter(e -> Arrays.equals(e.getCredentialId(), credentialId)).findFirst();
 		
 		if (opt.isEmpty()) {
 			return Pair.of(null, null);
@@ -74,24 +63,11 @@ public class WebAuthn4JCredentialServiceImpl implements FidoCredentialService {
 		}
 		
 		ObjectConverter objectConverter = new ObjectConverter();
-		AttestedCredentialDataConverter attestedCredentialDataConverter =
-				new AttestedCredentialDataConverter(objectConverter);
+		AttestedCredentialDataConverter attestedCredentialDataConverter = new AttestedCredentialDataConverter(objectConverter);
 		
-		var deserializedAttestedCredentialData =
-				attestedCredentialDataConverter.convert(mFidoCredential.getAteestedCredentialData());
+		var deserializedAttestedCredentialData = attestedCredentialDataConverter.convert(mFidoCredential.getAteestedCredentialData());
 		
-		CredentialRecord credentialRecord = new CredentialRecordImpl(
-				new NoneAttestationStatement(),
-				null,
-				null,
-				null,
-				mFidoCredential.getSignCount(),
-				deserializedAttestedCredentialData,
-				new AuthenticationExtensionsAuthenticatorOutputs<>(),
-				null,
-				null,
-				null
-		);
+		CredentialRecord credentialRecord = new CredentialRecordImpl(new NoneAttestationStatement(), null, null, null, mFidoCredential.getSignCount(), deserializedAttestedCredentialData, new AuthenticationExtensionsAuthenticatorOutputs<>(), null, null, null);
 		
 		return Pair.of(credentialRecord, mUser.getUserId());
 	}

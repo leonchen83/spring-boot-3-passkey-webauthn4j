@@ -18,10 +18,7 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
 	}
 	
 	@Override
-	public void onAuthenticationFailure(HttpServletRequest request,
-	                                    HttpServletResponse response,
-	                                    AuthenticationException exception)
-			throws IOException, ServletException {
+	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 		SecurityContextHolder.clearContext();
 		
 		HttpSession session = request == null ? null : request.getSession(false);

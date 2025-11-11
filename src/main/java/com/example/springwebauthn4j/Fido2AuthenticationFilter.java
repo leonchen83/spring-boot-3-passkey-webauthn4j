@@ -33,9 +33,7 @@ public class Fido2AuthenticationFilter extends AbstractAuthenticationProcessingF
 		
 		AssertionAuthenticationToken.Fido2Credentials credentials = new AssertionAuthenticationToken.Fido2Credentials(assertion);
 		
-		Collection<SimpleGrantedAuthority> authorities = principal.getAuthorities().stream()
-				.map(a -> new SimpleGrantedAuthority(a.getAuthority()))
-				.collect(Collectors.toList());
+		Collection<SimpleGrantedAuthority> authorities = principal.getAuthorities().stream().map(a -> new SimpleGrantedAuthority(a.getAuthority())).collect(Collectors.toList());
 		
 		AssertionAuthenticationToken authRequest = new AssertionAuthenticationToken(principal, credentials, authorities);
 		setDetails(request, authRequest);

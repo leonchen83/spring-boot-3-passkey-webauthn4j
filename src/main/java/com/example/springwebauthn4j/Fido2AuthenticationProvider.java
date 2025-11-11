@@ -34,8 +34,7 @@ public class Fido2AuthenticationProvider implements AuthenticationProvider {
 			throw new BadCredentialsException("Invalid Authentication");
 		}
 		
-		ServletRequestAttributes attrs =
-				(ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+		ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		HttpServletRequest request = (attrs != null) ? attrs.getRequest() : null;
 		
 		// 从 session 获取 authenticateOption
@@ -51,8 +50,7 @@ public class Fido2AuthenticationProvider implements AuthenticationProvider {
 		
 		// 取出 assertion json
 		AssertionAuthenticationToken src = (AssertionAuthenticationToken) authentication;
-		AssertionAuthenticationToken.Fido2Credentials credentials =
-				(AssertionAuthenticationToken.Fido2Credentials) src.getCredentials();
+		AssertionAuthenticationToken.Fido2Credentials credentials = (AssertionAuthenticationToken.Fido2Credentials) src.getCredentials();
 		String publicKeyCredentialGetResultJson = credentials == null ? "" : credentials.getPublicKeyCredentialGetResultJson();
 		if (publicKeyCredentialGetResultJson == null || publicKeyCredentialGetResultJson.isEmpty()) {
 			throw new BadCredentialsException("Invalid Assertion");
@@ -72,10 +70,7 @@ public class Fido2AuthenticationProvider implements AuthenticationProvider {
 		String userName = verifyResult.getUserId();
 		
 		// 构建已认证的 Authentication
-		List<SimpleGrantedAuthority> authorities = List.of(
-				new SimpleGrantedAuthority(SecurityContextUtil.Auth.AUTHENTICATED_FIDO.getValue()),
-				new SimpleGrantedAuthority(SecurityContextUtil.Role.USER.getValue())
-		);
+		List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(SecurityContextUtil.Auth.AUTHENTICATED_FIDO.getValue()), new SimpleGrantedAuthority(SecurityContextUtil.Role.USER.getValue()));
 		
 		User authenticatedPrincipal = new User(userName, "", authorities);
 		AssertionAuthenticationToken result = new AssertionAuthenticationToken(authenticatedPrincipal, credentials, authorities);

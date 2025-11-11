@@ -1,4 +1,3 @@
-// java
 package com.example.springwebauthn4j;
 
 import java.util.Collection;
@@ -12,9 +11,7 @@ public class AssertionAuthenticationToken extends AbstractAuthenticationToken {
 	private final User principal;
 	private final Fido2Credentials credentials;
 	
-	public AssertionAuthenticationToken(User principal,
-	                                    Fido2Credentials credentials,
-	                                    Collection<SimpleGrantedAuthority> authorities) {
+	public AssertionAuthenticationToken(User principal, Fido2Credentials credentials, Collection<SimpleGrantedAuthority> authorities) {
 		super(authorities);
 		this.principal = principal;
 		this.credentials = credentials;
