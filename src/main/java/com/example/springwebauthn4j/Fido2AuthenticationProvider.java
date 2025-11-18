@@ -2,6 +2,8 @@ package com.example.springwebauthn4j;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -21,6 +23,8 @@ import jakarta.servlet.http.HttpSession;
 
 @Component
 public class Fido2AuthenticationProvider implements AuthenticationProvider {
+	
+	private static Logger logger = LoggerFactory.getLogger(Fido2AuthenticationProvider.class);
 	
 	private final WebAuthnServerService webAuthnServerService;
 	
@@ -59,6 +63,8 @@ public class Fido2AuthenticationProvider implements AuthenticationProvider {
 		// 调用服务验证断言
 		AssertionVerifyResult verifyResult;
 		try {
+			logger.info("verify authenticateOption: {}", authenticateOption.getPublicKeyCredentialRequestOptions());
+			logger.info("verify publicKeyCredentialGetResultJson: {}", publicKeyCredentialGetResultJson);
 			verifyResult = webAuthnServerService.verifyAuthenticateAssertion(authenticateOption, publicKeyCredentialGetResultJson);
 		} catch (Exception e) {
 			throw new BadCredentialsException("Invalid Assertion");

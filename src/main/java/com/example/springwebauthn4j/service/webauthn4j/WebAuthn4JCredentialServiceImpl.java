@@ -31,19 +31,15 @@ public class WebAuthn4JCredentialServiceImpl implements FidoCredentialService {
 	}
 	
 	@Override
-	public void save(String userId, AttestationVerifyResult attestationVerifyResult) {
+	public void save(String userId, AttestationVerifyResult result) {
 		var mUser = mUserRepository.findByUserId(userId);
 		if (mUser == null) {
 			throw new RuntimeException("User not found");
 		}
 		
-		ObjectConverter objectConverter = new ObjectConverter();
-		AttestedCredentialDataConverter attestedCredentialDataConverter = new AttestedCredentialDataConverter(objectConverter);
-		
-		byte[] serializedAttestedCredentialData = attestedCredentialDataConverter.convert(attestationVerifyResult.getCredentialRecord().getAttestedCredentialData());
-		
-		MfidoCredentialforWebAuthn4J entity = new MfidoCredentialforWebAuthn4J(0, mUser.getInternalId(), attestationVerifyResult.getCredentialId(), attestationVerifyResult.getCredentialRecord().getCounter(), serializedAttestedCredentialData);
-		
+		AttestedCredentialDataConverter converter = new AttestedCredentialDataConverter(new ObjectConverter());
+		byte[] data = converter.convert(result.getCredentialRecord().getAttestedCredentialData());
+		MfidoCredentialforWebAuthn4J entity = new MfidoCredentialforWebAuthn4J(0, mUser.getInternalId(), result.getCredentialId(), result.getCredentialRecord().getCounter(), data);
 		mFidoCredentialRepository.save(entity);
 	}
 	
@@ -62,13 +58,9 @@ public class WebAuthn4JCredentialServiceImpl implements FidoCredentialService {
 			return Pair.of(null, null);
 		}
 		
-		ObjectConverter objectConverter = new ObjectConverter();
-		AttestedCredentialDataConverter attestedCredentialDataConverter = new AttestedCredentialDataConverter(objectConverter);
-		
-		var deserializedAttestedCredentialData = attestedCredentialDataConverter.convert(mFidoCredential.getAteestedCredentialData());
-		
-		CredentialRecord credentialRecord = new CredentialRecordImpl(new NoneAttestationStatement(), null, null, null, mFidoCredential.getSignCount(), deserializedAttestedCredentialData, new AuthenticationExtensionsAuthenticatorOutputs<>(), null, null, null);
-		
+		AttestedCredentialDataConverter converter = new AttestedCredentialDataConverter(new ObjectConverter());
+		var data = converter.convert(mFidoCredential.getAteestedCredentialData());
+		CredentialRecord credentialRecord = new CredentialRecordImpl(new NoneAttestationStatement(), null, null, null, mFidoCredential.getSignCount(), data, new AuthenticationExtensionsAuthenticatorOutputs<>(), null, null, null);
 		return Pair.of(credentialRecord, mUser.getUserId());
 	}
 }
