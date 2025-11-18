@@ -110,4 +110,19 @@ public class ServerPublicKeyCredentialCreationOptionsResponse extends ServerResp
 	public AuthenticationExtensionsClientInputs<RegistrationExtensionClientInput> getExtensions() {
 		return extensions;
 	}
+	
+	@Override
+	public String toString() {
+		return "ServerPublicKeyCredentialCreationOptionsResponse{" +
+				"rp=" + rp +
+				", user=" + user +
+				", attestation=" + attestation +
+				", authenticatorSelection=" + authenticatorSelection +
+				", challenge='" + challenge + '\'' +
+				", excludeCredentials=" + excludeCredentials +
+				", pubKeyCredParams=" + pubKeyCredParams +
+				", timeout=" + timeout +
+				", extensions=" + extensions +
+				'}';
+	}
 }
